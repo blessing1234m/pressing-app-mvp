@@ -14,7 +14,7 @@
                     <div class="mb-6">
                         <div class="flex space-x-4">
                             <a href="{{ route('dashboard.pricing') }}" class="bg-yellow-600 text-white px-4 py-2 rounded-md hover:bg-yellow-700">
-                                 Modifier les Prix
+                                 Modifier Mes Prix
                             </a>
                             <!-- Autres boutons... -->
                         </div>
@@ -67,7 +67,7 @@
                                                 </span>
                                             </td>
                                             <td class="px-4 py-2 border">
-                                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Gérer</a>
+                                                <a href="{{ route('orders.show', $order) }}" class="text-indigo-600 hover:text-indigo-900">Gérer</a>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -80,7 +80,7 @@
                         </div>
                     @endif
 
-                    <h4 class="text-lg font-medium mb-4 mt-8">Liste des Prix</h4>
+                    {{-- <h4 class="text-lg font-medium mb-4 mt-8">Liste des Prix</h4>
                     <form action="{{ route('dashboard.pricing.update') }}" method="POST" class="mb-8">
                         @csrf
                         <div class="space-y-4">
@@ -110,7 +110,7 @@
                                 Enregistrer les modifications
                             </button>
                         </div>
-                    </form>
+                    </form> --}}
 
                     <!-- Formulaire d'ajout d'un nouveau type de vêtement -->
                     <div class="mt-8 p-4 border border-gray-200 rounded-lg">

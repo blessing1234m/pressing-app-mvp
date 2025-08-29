@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Order extends Model
 {
     use HasFactory;
-        protected $fillable = [
+    protected $fillable = [
         'client_id',
         'pressing_id',
         'status',
@@ -35,4 +35,18 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    // Méthode pour obtenir le statut en français
+    // public function getStatusFrAttribute()
+    // {
+    //     $statuses = [
+    //         'pending' => 'En attente',
+    //         'confirmed' => 'Confirmée',
+    //         'in_progress' => 'En cours',
+    //         'completed' => 'Terminée',
+    //         'delivered' => 'Livrée'
+    //     ];
+
+    //     return $statuses[$this->status] ?? $this->status;
+    // }
 }

@@ -42,8 +42,13 @@ Route::get('/admin/users/{user}/edit', [DashboardController::class, 'editUser'])
 Route::put('/admin/users/{user}', [DashboardController::class, 'updateUser'])->name('admin.users.update')->middleware(['auth', 'checktype:admin']);
 Route::delete('/admin/users/{user}', [DashboardController::class, 'deleteUser'])->name('admin.users.destroy')->middleware(['auth', 'checktype:admin']);
 
-require __DIR__ . '/auth.php';
-
 // Routes pour la gestion des prix
 Route::get('/dashboard/pricing', [DashboardController::class, 'editPricing'])->name('dashboard.pricing')->middleware(['auth', 'checktype:owner']);
 Route::post('/dashboard/pricing', [DashboardController::class, 'updatePricing'])->name('dashboard.pricing.update')->middleware(['auth', 'checktype:owner']);
+
+// Routes pour la gestion des commandes
+Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show')->middleware('auth');
+Route::patch('/orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status')->middleware(['auth', 'checktype:owner']);
+
+require __DIR__ . '/auth.php';
+
