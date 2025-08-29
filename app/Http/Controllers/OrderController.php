@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Services\NotificationService;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -81,6 +82,9 @@ class OrderController extends Controller
                 ]);
             }
         }
+
+        // Notifier le propriétaire du pressing
+        NotificationService::notifyNewOrder($order);
 
         return redirect()->route('dashboard')->with('success', 'Commande créée avec succès!');
     }

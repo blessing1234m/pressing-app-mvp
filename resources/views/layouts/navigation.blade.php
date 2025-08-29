@@ -16,6 +16,14 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
+                <div class="hidden sm:flex sm:items-center sm:ml-6">
+                    <!-- Composant notifications -->
+                    <x-notifications />
+
+                    <!-- Settings Dropdown -->
+                    <!-- ... ton code existant ... -->
+                </div>
             </div>
 
             <!-- Settings Dropdown -->
