@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PressingApp - Accueil</title>
     @vite('resources/css/app.css')
 </head>
+
 <body class="bg-gray-100">
     <div class="min-h-screen flex flex-col">
         <!-- Navigation -->
@@ -19,10 +21,12 @@
                         @if (Route::has('login'))
                             <div class="space-x-4">
                                 @auth
-                                    <a href="{{ url('/dashboard') }}" class="text-gray-700 hover:text-indigo-600">Dashboard</a>
+                                    <a href="{{ url('/dashboard') }}"
+                                        class="text-gray-700 hover:text-indigo-600">Dashboard</a>
                                 @else
                                     <a href="{{ route('login') }}" class="text-gray-700 hover:text-indigo-600">Connexion</a>
-                                    <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Inscription</a>
+                                    <a href="{{ route('register') }}"
+                                        class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">Inscription</a>
                                 @endauth
                             </div>
                         @endif
@@ -34,27 +38,87 @@
         <!-- Contenu principal -->
         <main class="flex-grow">
             <div class="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-                <div class="text-center">
+                <div class="text-center mb-12">
                     <h1 class="text-4xl font-bold text-gray-900 mb-6">Bienvenue sur PressingApp</h1>
                     <p class="text-xl text-gray-600 mb-8">La solution innovante pour gérer votre pressing en ligne</p>
+                </div>
+                <!-- Sections informatives -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pour les Clients</h2>
+                        <p class="text-gray-600">Commandez facilement et suivez votre lessive en temps réel</p>
+                    </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pour les Clients</h2>
-                            <p class="text-gray-600">Commandez facilement et suivez votre lessive en temps réel</p>
-                        </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pour les Pressings</h2>
+                        <p class="text-gray-600">Gérez vos commandes et augmentez votre visibilité</p>
+                    </div>
 
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Pour les Pressings</h2>
-                            <p class="text-gray-600">Gérez vos commandes et augmentez votre visibilité</p>
-                        </div>
-
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h2 class="text-2xl font-semibold text-gray-800 mb-4">Livraison</h2>
-                            <p class="text-gray-600">Service de livraison pour plus de commodité</p>
-                        </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Livraison</h2>
+                        <p class="text-gray-600">Service de livraison pour plus de commodité</p>
                     </div>
                 </div>
+
+
+                <!-- Liste des Pressings -->
+                <div class="mb-12">
+                    <br>
+                    <h2 class="text-2xl font-bold text-gray-800 mb-8 text-center">Nos Pressings Partenaires</h2>
+
+                    @if ($pressings->count() > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            @foreach ($pressings as $pressing)
+                                <div
+                                    class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                                    <div class="p-6">
+                                        <h3 class="text-xl font-semibold text-gray-800 mb-2">{{ $pressing->name }}</h3>
+                                        <p class="text-gray-600 mb-4">{{ $pressing->description }}</p>
+
+                                        <div class="mb-4">
+                                            <p class="text-gray-700"><strong>Adresse:</strong> {{ $pressing->address }}
+                                            </p>
+                                            <p class="text-gray-700"><strong>Téléphone:</strong> {{ $pressing->phone }}
+                                            </p>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <h4 class="font-semibold text-gray-800 mb-2">Tarifs:</h4>
+                                            <ul class="space-y-1">
+                                                @foreach ($pressing->prices as $item => $price)
+                                                    <li class="flex justify-between text-gray-700">
+                                                        <span class="capitalize">{{ $item }}:</span>
+                                                        <span>{{ number_format($price, 0, ',', ' ') }} FCFA</span>
+                                                    </li>
+                                                @endforeach
+                                            </ul>
+                                        </div>
+
+                                        @auth
+                                            @if (auth()->user()->type === 'client')
+                                                <a href="{{ route('orders.create', $pressing) }}"
+                                                    class="block w-full bg-indigo-600 text-white text-center py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">
+                                                    Commander
+                                                </a>
+                                            @endif
+                                        @else
+                                            <a href="{{ route('login') }}"
+                                                class="block w-full bg-indigo-600 text-white text-center py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors">
+                                                Se connecter pour commander
+                                            </a>
+                                        @endauth
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-12">
+                            <p class="text-gray-600 text-lg">Aucun pressing disponible pour le moment.</p>
+                        </div>
+                    @endif
+                </div>
+
+
             </div>
         </main>
 
@@ -66,4 +130,5 @@
         </footer>
     </div>
 </body>
+
 </html>
