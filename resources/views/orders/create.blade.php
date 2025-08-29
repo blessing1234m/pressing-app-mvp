@@ -31,44 +31,70 @@
                 <div class="bg-white rounded-lg shadow-md p-6">
                     <h1 class="text-2xl font-bold text-gray-800 mb-6">Nouvelle Commande - {{ $pressing->name }}</h1>
 
+                    <!-- Messages d'erreur -->
+                    @if($errors->any())
+                        <div class="mb-6 bg-red-50 border border-red-200 rounded-md p-4">
+                            <h3 class="text-red-800 font-semibold mb-2">Veuillez corriger les erreurs suivantes :</h3>
+                            <ul class="list-disc list-inside text-red-700">
+                                @foreach($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
                     <form action="{{ route('orders.store') }}" method="POST">
                         @csrf
                         <input type="hidden" name="pressing_id" value="{{ $pressing->id }}">
 
                         <!-- Section Articles -->
-                        <div class="mb-6">
+                        <div class="mb-8">
                             <h2 class="text-xl font-semibold text-gray-700 mb-4">Articles à nettoyer</h2>
+                            <p class="text-gray-600 mb-6">Sélectionnez les types de vêtements et les quantités</p>
 
-                            <div class="space-y-4">
+                            <div class="space-y-3" id="items-container">
                                 @foreach ($pressing->prices as $item => $price)
                                     <div
-                                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                                        <div>
-                                            <h3 class="font-medium text-gray-800 capitalize">{{ $item }}</h3>
-                                            <p class="text-gray-600">{{ number_format($price, 0, ',', ' ') }} FCFA par
-                                                article</p>
+                                        class="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                                        <div class="flex-1">
+                                            <label class="block text-sm font-medium text-gray-700 capitalize mb-1">
+                                                {{ str_replace('_', ' ', $item) }}
+                                            </label>
+                                            <p class="text-sm text-gray-500">{{ number_format($price, 0, ',', ' ') }}
+                                                FCFA par article</p>
                                         </div>
-                                        <div class="flex items-center">
-                                            <button type="button"
-                                                class="decrement-btn bg-gray-200 rounded-l-md px-3 py-1"
-                                                data-item="{{ $item }}">
-                                                -
-                                            </button>
-                                            <input type="number" name="items[{{ $item }}]" value="0"
-                                                min="0"
-                                                class="quantity-input w-16 text-center border-y border-gray-200 py-1"
-                                                data-price="{{ $price }}" data-item="{{ $item }}">
-                                            <button type="button"
-                                                class="increment-btn bg-gray-200 rounded-r-md px-3 py-1"
-                                                data-item="{{ $item }}">
-                                                +
-                                            </button>
+                                        <div class="flex items-center space-x-3">
+                                            <span class="text-sm text-gray-600 whitespace-nowrap"
+                                                id="total-{{ $item }}">
+                                                0 FCFA
+                                            </span>
+                                            <div class="flex items-center border border-gray-300 rounded-md">
+                                                <button type="button"
+                                                    class="decrement-btn px-3 py-2 text-gray-600 hover:bg-gray-100"
+                                                    data-item="{{ $item }}" data-price="{{ $price }}">
+                                                    −
+                                                </button>
+                                                <input type="number" name="items[{{ $item }}]" value="0"
+                                                    min="0" max="20"
+                                                    class="quantity-input w-12 text-center border-x border-gray-300 py-2"
+                                                    data-item="{{ $item }}" data-price="{{ $price }}"
+                                                    onkeypress="return event.charCode >= 48 && event.charCode <= 57">
+                                                <button type="button"
+                                                    class="increment-btn px-3 py-2 text-gray-600 hover:bg-gray-100"
+                                                    data-item="{{ $item }}" data-price="{{ $price }}">
+                                                    +
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
-                        </div>
 
+                            <div id="no-items-message"
+                                class="hidden mt-4 bg-yellow-50 border border-yellow-200 rounded-md p-4">
+                                <p class="text-yellow-700">Veuillez sélectionner au moins un article.</p>
+                            </div>
+                        </div>
                         <!-- Section Informations de Récupération -->
                         <div class="mb-6">
                             <h2 class="text-xl font-semibold text-gray-700 mb-4">Informations de récupération</h2>
@@ -141,53 +167,103 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            const incrementButtons = document.querySelectorAll('.increment-btn');
-            const decrementButtons = document.querySelectorAll('.decrement-btn');
-            const quantityInputs = document.querySelectorAll('.quantity-input');
+            const itemsContainer = document.getElementById('items-container');
+            const noItemsMessage = document.getElementById('no-items-message');
             const totalAmountElement = document.getElementById('total-amount');
             const advanceAmountElement = document.getElementById('advance-amount');
+            const submitButton = document.querySelector('button[type="submit"]');
 
-            function updateTotal() {
-                let total = 0;
+            let total = 0;
 
-                quantityInputs.forEach(input => {
+            // Fonction pour mettre à jour les totaux
+            function updateTotals() {
+                total = 0;
+                let hasItems = false;
+
+                document.querySelectorAll('.quantity-input').forEach(input => {
                     const quantity = parseInt(input.value);
                     const price = parseInt(input.dataset.price);
-                    total += quantity * price;
-                });
+                    const item = input.dataset.item;
+                    const itemTotal = quantity * price;
 
-                totalAmountElement.textContent = total.toLocaleString('fr-FR') + ' FCFA';
-                advanceAmountElement.textContent = Math.floor(total / 2).toLocaleString('fr-FR') + ' FCFA';
-            }
+                    // Mettre à jour le total par article
+                    document.getElementById(`total-${item}`).textContent =
+                        itemTotal.toLocaleString('fr-FR') + ' FCFA';
 
-            incrementButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const item = this.dataset.item;
-                    const input = document.querySelector(`input[name="items[${item}]"]`);
-                    input.value = parseInt(input.value) + 1;
-                    updateTotal();
-                });
-            });
+                    total += itemTotal;
 
-            decrementButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    const item = this.dataset.item;
-                    const input = document.querySelector(`input[name="items[${item}]"]`);
-                    if (parseInt(input.value) > 0) {
-                        input.value = parseInt(input.value) - 1;
-                        updateTotal();
+                    if (quantity > 0) {
+                        hasItems = true;
                     }
                 });
+
+                // Mettre à jour les totaux généraux
+                totalAmountElement.textContent = total.toLocaleString('fr-FR') + ' FCFA';
+                advanceAmountElement.textContent = Math.floor(total / 2).toLocaleString('fr-FR') + ' FCFA';
+
+                // Afficher/cacher le message d'erreur
+                if (hasItems) {
+                    noItemsMessage.classList.add('hidden');
+                    submitButton.disabled = false;
+                    submitButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    noItemsMessage.classList.remove('hidden');
+                    submitButton.disabled = true;
+                    submitButton.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+
+            // Gestion des boutons +/-
+            itemsContainer.addEventListener('click', function(e) {
+                if (e.target.classList.contains('increment-btn')) {
+                    const input = e.target.parentElement.querySelector('.quantity-input');
+                    if (parseInt(input.value) < 20) {
+                        input.value = parseInt(input.value) + 1;
+                        input.dispatchEvent(new Event('input'));
+                    }
+                }
+
+                if (e.target.classList.contains('decrement-btn')) {
+                    const input = e.target.parentElement.querySelector('.quantity-input');
+                    if (parseInt(input.value) > 0) {
+                        input.value = parseInt(input.value) - 1;
+                        input.dispatchEvent(new Event('input'));
+                    }
+                }
             });
 
-            quantityInputs.forEach(input => {
-                input.addEventListener('input', updateTotal);
+            // Écouter les changements sur les inputs
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    // Validation manuelle
+                    if (this.value < 0) this.value = 0;
+                    if (this.value > 20) this.value = 20;
+                    if (this.value === '') this.value = 0;
+
+                    updateTotals();
+                });
             });
 
-            // Initialiser le total
-            updateTotal();
+            // Validation du formulaire
+            document.querySelector('form').addEventListener('submit', function(e) {
+                if (total === 0) {
+                    e.preventDefault();
+                    noItemsMessage.classList.remove('hidden');
+                    noItemsMessage.scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+
+            // Initialiser les totaux
+            updateTotals();
+
+            // Amélioration UX: Focus sur le premier champ
+            document.getElementById('pickup_date')?.focus();
         });
     </script>
+
+    
 </body>
 
 </html>

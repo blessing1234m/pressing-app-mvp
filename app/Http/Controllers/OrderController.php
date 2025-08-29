@@ -38,12 +38,30 @@ class OrderController extends Controller
     {
         $validated = $request->validate([
             'pressing_id' => 'required|exists:pressings,id',
-            'pickup_date' => 'required|date',
+            'pickup_date' => 'required|date|after:now',
             'client_address' => 'required|string|max:500',
             'special_instructions' => 'nullable|string|max:1000',
             'items' => 'required|array',
-            'items.*' => 'required|integer|min:0'
+            'items.*' => 'required|integer|min:0|max:20' // Limite à 20 articles par type
+        ], [
+            'pickup_date.after' => 'La date de récupération doit être future.',
+            'items.required' => 'Veuillez sélectionner au moins un article.',
+            'items.*.min' => 'La quantité ne peut pas être négative.',
+            'items.*.max' => 'La quantité ne peut pas dépasser 20 articles par type.'
         ]);
+
+        // Vérifier qu'au moins un article a une quantité > 0
+        $hasItems = false;
+        foreach ($validated['items'] as $quantity) {
+            if ($quantity > 0) {
+                $hasItems = true;
+                break;
+            }
+        }
+
+        if (!$hasItems) {
+            return back()->withErrors(['items' => 'Veuillez sélectionner au moins un article.'])->withInput();
+        }
 
         // Calculer le montant total
         $pressing = Pressing::find($validated['pressing_id']);
@@ -54,10 +72,6 @@ class OrderController extends Controller
             if ($quantity > 0 && isset($prices[$itemType])) {
                 $totalAmount += $quantity * $prices[$itemType];
             }
-        }
-
-        if ($totalAmount === 0) {
-            return back()->withErrors(['items' => 'Veuillez sélectionner au moins un article.'])->withInput();
         }
 
         // Créer la commande
