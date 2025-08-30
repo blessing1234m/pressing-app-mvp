@@ -38,24 +38,21 @@ class DashboardController extends Controller
         return view('dashboard.client', compact('orders'));
     }
 
-    private function ownerDashboard($user)
-    {
-        $pressing = Pressing::where('owner_id', $user->id)->first();
+private function ownerDashboard($user)
+{
+    $pressing = Pressing::where('owner_id', $user->id)->first();
 
-        if (!$pressing) {
-            return view('dashboard.owner-setup');
-        }
-
-        $orders = Order::with('client')
-            ->where('pressing_id', $pressing->id)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        // Ajoute cette ligne pour récupérer les prix
-        $prices = json_decode($pressing->prices, true) ?? [];
-
-        return view('dashboard.owner', compact('orders', 'pressing', 'prices'));
+    if (!$pressing) {
+        return view('dashboard.owner-setup'); // Vue pour les propriétaires sans pressing
     }
+
+    $orders = Order::with('client')
+                  ->where('pressing_id', $pressing->id)
+                  ->orderBy('created_at', 'desc')
+                  ->get();
+
+    return view('dashboard.owner', compact('orders', 'pressing'));
+}
 
     private function adminDashboard($user)
     {

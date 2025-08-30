@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PressingController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -54,6 +55,12 @@ Route::get('/notifications', [NotificationController::class, 'index'])->name('no
 Route::post('/notifications/{notification}/read', [NotificationController::class, 'markAsRead'])->name('notifications.read')->middleware('auth');
 Route::post('/notifications/read-all', [NotificationController::class, 'markAllAsRead'])->name('notifications.read-all')->middleware('auth');
 Route::get('/notifications/unread-count', [NotificationController::class, 'getUnreadCount'])->name('notifications.unread-count')->middleware('auth');
+
+// Routes pour la gestion des pressings
+Route::get('/pressings/create', [PressingController::class, 'create'])->name('pressings.create')->middleware(['auth', 'checktype:owner']);
+Route::post('/pressings', [PressingController::class, 'store'])->name('pressings.store')->middleware(['auth', 'checktype:owner']);
+Route::get('/pressings/{pressing}/edit', [PressingController::class, 'edit'])->name('pressings.edit')->middleware(['auth', 'checktype:owner']);
+Route::put('/pressings/{pressing}', [PressingController::class, 'update'])->name('pressings.update')->middleware(['auth', 'checktype:owner']);
 
 require __DIR__ . '/auth.php';
 
