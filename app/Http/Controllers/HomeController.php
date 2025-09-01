@@ -2,20 +2,29 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request; // Correction: Request avec majuscule
-use App\Models\Pressing; // Correction: Backslash au lieu de point
+use Illuminate\Http\Request;
+use App\Models\Pressing;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
-    public function index()
-    {
-        $pressings = Pressing::with('owner')->get(); // Correction: :: au lieu de :
+public function index()
+{
+    try {
+        // N'afficher que les pressings approuvés
+        $pressings = Pressing::with('owner')
+            ->where('is_approved', true)
+            ->get();
 
-        // Décoder les prix JSON pour chaque pressing
-        $pressings->each(function (Pressing $pressing) {
-            $pressing->prices = json_decode($pressing->prices, true);
-        });
+        // Plus besoin de décoder manuellement, le modèle s'en charge
+        return view('home', compact('pressings'));
 
-        return view('home', compact('pressings')); // Correction: Ajout du ;
+    } catch (\Exception $e) {
+        Log::error('Error in HomeController: ' . $e->getMessage());
+
+        // En cas d'erreur, retourner une collection vide
+        $pressings = collect([]);
+        return view('home', compact('pressings'));
     }
+}
 }

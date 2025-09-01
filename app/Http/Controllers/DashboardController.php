@@ -152,7 +152,7 @@ private function ownerDashboard($user)
         }
 
         // Décoder les prix JSON en tableau PHP
-        $prices = json_decode($pressing->prices, true);
+        $prices = $pressing->prices;
 
         // Vérifier si $prices est bien un tableau
         if (!is_array($prices)) {
@@ -184,7 +184,7 @@ private function ownerDashboard($user)
         ]);
 
         // Récupérer les prix actuels
-        $currentPrices = Pressing::validatePrices(json_decode($pressing->prices, true));
+        $currentPrices = Pressing::validatePrices($pressing->prices);
 
         // Mettre à jour les prix existants
         foreach ($validated['prices'] as $item => $price) {
@@ -204,7 +204,7 @@ private function ownerDashboard($user)
         }
 
         // Mettre à jour les prix
-        $pressing->prices = json_encode($currentPrices);
+        $pressing->prices = $currentPrices;
         $pressing->save();
 
         $message = 'Prix mis à jour avec succès!';

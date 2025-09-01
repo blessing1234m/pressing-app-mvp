@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Log;
 
 class Pressing extends Model
 {
@@ -16,12 +17,17 @@ class Pressing extends Model
         'address',
         'phone',
         'prices', // Cette ligne doit être présente
-        'description'
+        'description',
+        'is_approved',
+        'approved_at',
+        'approved_by'
     ];
 
     // If 'prices' is a JSON column in your database, add this:
     protected $casts = [
         'prices' => 'array',
+        'is_approved' => 'boolean',
+        'approved_at' => 'datetime'
     ];
 
     public function owner(): BelongsTo
@@ -47,5 +53,19 @@ class Pressing extends Model
         }
 
         return $validated;
+
     }
+
+    // Dans la classe Pressing
+public function getPricesAttribute($value)
+{
+    if (is_array($value)) {
+        return $value;
+    }
+    if (is_string($value)) {
+        $decoded = json_decode($value, true);
+        return is_array($decoded) ? $decoded : [];
+    }
+    return [];
+}
 }

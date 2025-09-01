@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('name');
             $table->text('address');
             $table->string('phone');
-            $table->json('prices'); // Ex: {'shirt': 2000, 'pants': 3000}
+            $table->string('prices'); // Ex: {'shirt': 2000, 'pants': 3000}
             $table->text('description')->nullable();
             $table->timestamps();
         });

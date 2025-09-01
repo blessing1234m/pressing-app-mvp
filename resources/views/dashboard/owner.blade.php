@@ -29,6 +29,16 @@
             </h2>
         </x-slot>
 
+<!-- ALERTE INFO -->
+<div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6 flex items-center">
+    <svg class="h-5 w-5 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
+        <path fill-rule="evenodd" d="M18 10A8 8 0 11 2 10a8 8 0 0116 0zm-8 4a1 1 0 100-2 1 1 0 000 2zm-.75-7a.75.75 0 01.75.75v3a.75.75 0 01-1.5 0v-3A.75.75 0 019.25 7z" clip-rule="evenodd" />
+    </svg>
+    <span class="text-blue-800 text-sm">
+        Si vous venez de vous inscrire OU Si votre pressing ne s'affiche pas sur la <a href="{{ route('home') }}" class="underline text-blue-700 hover:text-blue-900">page d'accueil</a>, contactez le <strong>+228 70 38 65 85</strong>
+    </span>
+</div>
+
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">

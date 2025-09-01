@@ -7,6 +7,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PressingController;
+use App\Http\Controllers\Admin\PressingApprovalController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -61,6 +62,13 @@ Route::get('/pressings/create', [PressingController::class, 'create'])->name('pr
 Route::post('/pressings', [PressingController::class, 'store'])->name('pressings.store')->middleware(['auth', 'checktype:owner']);
 Route::get('/pressings/{pressing}/edit', [PressingController::class, 'edit'])->name('pressings.edit')->middleware(['auth', 'checktype:owner']);
 Route::put('/pressings/{pressing}', [PressingController::class, 'update'])->name('pressings.update')->middleware(['auth', 'checktype:owner']);
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', 'checktype:admin'])->group(function () {
+    Route::get('/pressings', [PressingApprovalController::class, 'index'])->name('pressings.index');
+    Route::get('/pressings/{pressing}', [PressingApprovalController::class, 'show'])->name('pressings.show');
+    Route::post('/pressings/{pressing}/approve', [PressingApprovalController::class, 'approve'])->name('pressings.approve');
+    Route::delete('/pressings/{pressing}/reject', [PressingApprovalController::class, 'reject'])->name('pressings.reject');
+});
 
 require __DIR__ . '/auth.php';
 

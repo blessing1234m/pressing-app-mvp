@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Pressing;
 use Illuminate\Validation\Rule;
+use App\Notifications\NewPressingForApproval;
+use App\Models\User;
+
 
 class PressingController extends Controller
 {
@@ -72,11 +75,53 @@ class PressingController extends Controller
             'address' => $validated['address'],
             'phone' => $validated['phone'],
             'description' => $validated['description'],
-            'prices' => json_encode($validated['prices'])
+            'prices' => ($validated['prices'])
         ]);
 
         return redirect()->route('dashboard')
             ->with('success', 'Votre pressing a été créé avec succès !');
+
+            // Créer le pressing NON approuvé
+    $pressing = Pressing::create([
+        'owner_id' => Auth::id(),
+        'name' => $validated['name'],
+        'address' => $validated['address'],
+        'phone' => $validated['phone'],
+        'description' => $validated['description'],
+        'prices' => json_encode($validated['prices']),
+        'is_approved' => false // IMPORTANT: false par défaut
+    ]);
+
+    // Notifier tous les administrateurs
+    $admins = User::where('type', 'admin')->get();
+    foreach ($admins as $admin) {
+        $admin->notify(new NewPressingForApproval($pressing));
+    }
+
+
+    // Nettoie et formatte les prix
+    $cleanedPrices = [];
+    foreach ($validated['prices'] as $item => $price) {
+        // Convertit en integer et nettoie le nom de l'article
+        $cleanedItem = strtolower(trim($item));
+        $cleanedPrices[$cleanedItem] = (int) $price;
+    }
+
+    // Créer le pressing NON approuvé
+    $pressing = Pressing::create([
+        'owner_id' => Auth::id(),
+        'name' => $validated['name'],
+        'address' => $validated['address'],
+        'phone' => $validated['phone'],
+        'description' => $validated['description'],
+        'prices' => json_encode($cleanedPrices), // JSON bien formaté
+        'is_approved' => false
+    ]);
+
+
+
+    return redirect()->route('dashboard')
+        ->with('success', 'Votre pressing a été créé ! Il sera visible après validation par l\'administrateur.');
     }
 
     public function edit(Pressing $pressing)

@@ -26,7 +26,7 @@ class OrderController extends Controller
     public function create(Pressing $pressing)
     {
         // Décoder les prix du pressing
-        $pressing->prices = json_decode($pressing->prices, true);
+        $pressing->prices = $pressing->prices;
 
         return view('orders.create', compact('pressing'));
     }
@@ -65,7 +65,7 @@ class OrderController extends Controller
 
         // Calculer le montant total
         $pressing = Pressing::find($validated['pressing_id']);
-        $prices = json_decode($pressing->prices, true);
+        $prices = $pressing->prices;
         $totalAmount = 0;
 
         foreach ($validated['items'] as $itemType => $quantity) {

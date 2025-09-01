@@ -82,17 +82,29 @@
                                             </p>
                                         </div>
 
-                                        <div class="mb-4">
-                                            <h4 class="font-semibold text-gray-800 mb-2">Tarifs:</h4>
-                                            <ul class="space-y-1">
-                                                @foreach ($pressing->prices as $item => $price)
-                                                    <li class="flex justify-between text-gray-700">
-                                                        <span class="capitalize">{{ $item }}:</span>
-                                                        <span>{{ number_format($price, 0, ',', ' ') }} FCFA</span>
-                                                    </li>
-                                                @endforeach
-                                            </ul>
-                                        </div>
+<div class="mb-4">
+    <h4 class="font-semibold text-gray-800 mb-2">Tarifs:</h4>
+    <ul class="space-y-1">
+        @php
+            // Debug temporaire - à enlever après
+            $pricesArray = is_array($pressing->prices) ? $pressing->prices : [];
+        @endphp
+
+        @if(count($pricesArray) > 0)
+            @foreach($pricesArray as $item => $price)
+                <li class="flex justify-between text-gray-700">
+                    <span class="capitalize">{{ $item }}:</span>
+                    <span>{{ number_format($price, 0, ',', ' ') }} FCFA</span>
+                </li>
+            @endforeach
+        @else
+            <li class="text-red-500">❌ Aucun tarif configuré</li>
+            <li class="text-xs text-gray-400">
+                Données brutes: {{ substr($pressing->getRawOriginal('prices'), 0, 100) }}
+            </li>
+        @endif
+    </ul>
+</div>
 
                                         @auth
                                             @if (auth()->user()->type === 'client')

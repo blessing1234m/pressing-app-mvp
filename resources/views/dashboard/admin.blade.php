@@ -59,7 +59,7 @@
                                             <td class="px-4 py-2 border">{{ $pressing->owner->name }}</td>
                                             <td class="px-4 py-2 border">{{ $pressing->orders_count }}</td>
                                             <td class="px-4 py-2 border">
-                                                <a href="#" class="text-indigo-600 hover:text-indigo-900">Voir</a>
+                                                <a href="{{ route('admin.pressings.show', $pressing) }}" class="text-indigo-600 hover:text-indigo-900">Voir</a>
                                             </td>
                                         </tr>
                                     @endforeach
