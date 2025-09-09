@@ -68,6 +68,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'checktype:admin'])-
     Route::get('/pressings/{pressing}', [PressingApprovalController::class, 'show'])->name('pressings.show');
     Route::post('/pressings/{pressing}/approve', [PressingApprovalController::class, 'approve'])->name('pressings.approve');
     Route::delete('/pressings/{pressing}/reject', [PressingApprovalController::class, 'reject'])->name('pressings.reject');
+    Route::get('/pressings/{pressing}/confirm-delete', [PressingApprovalController::class, 'confirmDelete'])->name('pressings.confirm-delete');
+    Route::delete('/pressings/{pressing}', [PressingApprovalController::class, 'destroy'])->name('pressings.destroy');
 });
 
 require __DIR__ . '/auth.php';

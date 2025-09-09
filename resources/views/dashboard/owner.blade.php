@@ -151,7 +151,7 @@
                     </form> --}}
 
                         <!-- Formulaire d'ajout d'un nouveau type de vêtement -->
-                        <div class="mt-8 p-4 border border-gray-200 rounded-lg">
+                        {{-- <div class="mt-8 p-4 border border-gray-200 rounded-lg">
                             <h4 class="font-semibold mb-3">Ajouter un nouveau type de vêtement</h4>
                             <div class="flex space-x-2">
                                 <input type="text" placeholder="Nom du vêtement"
@@ -163,7 +163,7 @@
                                     Ajouter
                                 </button>
                             </div>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
             </div>

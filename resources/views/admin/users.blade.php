@@ -44,6 +44,9 @@
                                         Commandes</th>
                                     <th
                                         class="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Phone</th>
+                                    <th
+                                        class="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Pressing</th>
                                     <th
                                         class="px-6 py-3 border-b border-gray-200 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -77,6 +80,9 @@
                                             {{ $user->orders_count }} commande(s)
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                            {{ $user->phone ? $user->phone : '-' }}
+                                        </td>
+                                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                             @if ($user->pressing)
                                                 {{ $user->pressing->name }}
                                             @else
@@ -89,13 +95,13 @@
                                         <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
                                             <div class="flex space-x-2">
                                                 <a href="{{ route('admin.users.edit', $user) }}" class="text-indigo-600 hover:text-indigo-900">Voir/Modifier</a>
-                                                
+
                                                 @if($user->id !== Auth::id())
                                                     <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="inline">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" 
-                                                                class="text-red-600 hover:text-red-900" 
+                                                        <button type="submit"
+                                                                class="text-red-600 hover:text-red-900"
                                                                 onclick="return confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')">
                                                             Supprimer
                                                         </button>

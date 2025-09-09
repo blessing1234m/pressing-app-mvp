@@ -51,7 +51,7 @@
                                 <x-dropdown-link :href="route('admin.users')">
                                     Utilisateurs
                                 </x-dropdown-link>
-                                <x-dropdown-link href="#">
+                                <x-dropdown-link :href="route('admin.pressings.index')">
                                     Pressings
                                 </x-dropdown-link>
                                 <x-dropdown-link href="#">

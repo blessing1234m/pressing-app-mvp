@@ -29,6 +29,15 @@
                             <h3 class="text-lg font-semibold mb-3">Informations Client</h3>
                             <p><strong>Nom:</strong> {{ $order->client->name }}</p>
                             <p><strong>Email:</strong> {{ $order->client->email }}</p>
+                            <p><strong>Téléphone:</strong>
+                                @if ($order->client->phone)
+                                    <a href="tel:{{ $order->client->phone }}" class="text-blue-600 hover:text-blue-800">
+                                        {{ $order->client->phone }}
+                                    </a>
+                                @else
+                                    <span class="text-gray-400">-</span>
+                                @endif
+                            </p>
                             <p><strong>Adresse:</strong> {{ $order->client_address }}</p>
                         </div>
 

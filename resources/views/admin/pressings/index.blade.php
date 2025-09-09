@@ -42,6 +42,7 @@
                                                     @csrf
                                                     <button type="submit" class="text-green-600 hover:text-green-900 mr-3">Approuver</button>
                                                 </form>
+
                                                 <form action="{{ route('admin.pressings.reject', $pressing) }}" method="POST" class="inline">
                                                     @csrf
                                                     @method('DELETE')
@@ -85,6 +86,7 @@
                                             <td class="px-4 py-2 border">{{ $pressing->approved_at ? $pressing->approved_at->format('d/m/Y') : 'N/A' }}</td>
                                             <td class="px-4 py-2 border">
                                                 <a href="{{ route('admin.pressings.show', $pressing) }}" class="text-blue-600 hover:text-blue-900">Voir</a>
+                                                <a href="{{ route('admin.pressings.confirm-delete', $pressing) }}" class="text-red-600 hover:text-red-900">🗑️ Supprimer</a>
                                             </td>
                                         </tr>
                                     @endforeach
